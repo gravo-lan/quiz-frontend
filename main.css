@@ -92,7 +92,7 @@ p {
 }
 
 .header {
-    background-image: url(wallpaper.gif);
+    background-image: url(assets/wallpaper.gif);
     background-size: auto;
     padding: 5px;
     position: relative;
