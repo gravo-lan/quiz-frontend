@@ -9,7 +9,7 @@ let userAnswers = [];
 
 const id = 0;
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://quiz-backend-junk.onrender.com";
 
 const fetchData = async () => {
     document.getElementById("text").style.display="none";
