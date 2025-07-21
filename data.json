@@ -1,0 +1,18 @@
+{ 
+    "options": [
+        ["London", "Berlin", "Paris", "Madrid"],
+        ["New York", "Chicago", "Orleans", "Washington D.C."],
+        ["Abuja", "Khartoum", "Lagos", "Kano"],
+        ["Almaty", "Astana", "Semey", "Miran"]
+    ],
+
+    "questions": [
+        "What is the capital of France?",
+        "What is the capital of the USA?",
+        "What is the capital of Nigeria?",
+        "What is the capital of Kazakhstan?"
+    ],
+    "solutions": [3,4,1,2],
+    "title": "Quiz on Country Capitals!",
+    "desc": "A short quiz testing your geographical knowledge."
+}

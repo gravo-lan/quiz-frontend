@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class='header'>
+        <h1>Quiz</h1>
+    </div>
+    <hr id="progbar">
+    <h2 id="question"></h2><br>
+    <div class="loader" id="loading"></div>
+    <div id="options">
+        <button class="options" id="opt1"></button><br><br>
+        <button class="options" id="opt2"></button><br><br>
+        <button class="options" id="opt3"></button><br><br>
+        <button class="options" id="opt4"></button><br><br><br>
+    </div>
+    <input id="name" value="Input your name...">
+    <button class="submit" id="submit"></button>
+    <div id="text">
+        <h2 id="info"></h2>
+        <p id="blurb"></p>
+        <p class="score" id="score">Score: 0 </p> 
+        <p class="progress" id="progress"></p>
+        <p id="timer"></p>
+    </div>
+    <div>
+        <table id="table">
+            <tbody id="tablebody">
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Time</th>
+                    <th>Timestamp</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<script type="module" src="index.js" defer></script>
+</html>
