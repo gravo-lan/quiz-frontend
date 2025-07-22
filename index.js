@@ -11,6 +11,10 @@ const HOME_URL = document.URL;
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 
+const searchBtn = document.getElementById("search-btn");
+const quizBtn = document.getElementById("quiz-btn");
+const nameInput = document.getElementById("name");
+
 const API_URL = "https://quiz-backend-junk.onrender.com";
 
 const fetchData = async () => {
@@ -37,7 +41,7 @@ const fetchData = async () => {
     }
 };
 
-const fetchLeadeboard = async () => {
+const fetchLeaderboard = async () => {
     try {
         const response = await fetch(`${API_URL}/api/submissions/${id}`);
         if (!response.ok) {
@@ -55,7 +59,8 @@ const hidden = [document.getElementById("timer"),document.getElementById("option
 
 function errorMessage() {
     document.getElementById("blurb").innerText = "Please try again later";
-    document.getElementById("submit").style.display = "none";
+    searchBtn.style.display = "none";
+    quizBtn.style.display = "none";
     document.getElementById("name").style.display = "none";
     document.getElementById("info").style.display = "block";
     document.getElementById("blurb").style.display = "block";
@@ -101,23 +106,23 @@ function update() {
 }
 
 function start() {
-    const name = document.getElementById("name");
-    if (name.value == "") {
+    if (nameInput.value.trim() === "") {
         alert("Please input a name.");
         return;
     }
+    
     hide(false);
-    started=true;
-    document.getElementById("submit").innerText = "Next";
-    username = document.getElementById("name").value;
-    document.getElementById("name").style.display = "none";
+    started = true;
+    quizBtn.innerText = "Next";
+    username = nameInput.value.trim();
+    nameInput.style.display = "none";
     advance();
 }
 
 function finish() {
     hide(true);
     document.getElementById("question").style.display="none";
-    document.getElementById("submit").style.display="none";
+    quizBtn.style.display="none";
     document.getElementById("info").innerText = "You did it!";
     
     // Calculate total time taken
@@ -161,6 +166,7 @@ function hide(bool) {
     for (let i = 0; i<hidden.length; i++) hidden[i].style.display = x;
     document.getElementById("info").style.display = y;
     document.getElementById("blurb").style.display=y;
+    searchBtn.classList.toggle('hidden', !bool);
 }
 
 function selection(option) {
@@ -219,62 +225,86 @@ async function submitResults(score, timeTaken, answers, id, username) {
     }
 }
 
+function searchQuiz() {
+    const quizId = nameInput.value.trim();
+    
+    if (!quizId) {
+        alert("Please enter a quiz ID");
+        return;
+    }
+
+    searchBtn.disabled = true;
+    searchBtn.innerText = "Loading...";
+    
+    const cleanUrl = new URL(window.location.origin + window.location.pathname);
+    cleanUrl.searchParams.set("id", quizId);
+    window.location.href = cleanUrl.toString();
+}
+
+function setupEventListeners() {
+    for (let i = 1; i < 5; i++) {
+        document.getElementById("opt" + i).addEventListener("click", () => {
+            if (!selected) {
+                selection(i);
+            }
+        });
+    }
+
+    document.getElementById("search-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        searchQuiz();
+    });
+
+    quizBtn.addEventListener("click", () => {
+        if (id && !started) {
+            start();
+        } else {
+            advance();
+        }
+    });
+}
+
 hide(true);
 
 if (!id) {
     document.getElementById("loading").style.display = "none";
     document.getElementById("info").innerText = "Quiz Site";
     document.getElementById("blurb").innerText = "A quiz website that can host custom modular quizzes.";
-    document.getElementById("name").placeholder = "Enter quiz ID";
-    document.getElementById("name").value = "";
-    document.getElementById("submit").innerText = "Search";
-
-    document.getElementById("search-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const button = document.getElementById("submit");
-        const quizId = document.getElementById("name").value.trim();
-        
-        if (!quizId) {
-            alert("Please enter a quiz ID");
-            return;
-        }
-
-        button.disabled = true;
-        button.innerText = "Loading...";
-        
-        const cleanUrl = new URL(window.location.origin + window.location.pathname);
-        cleanUrl.searchParams.set("id", quizId);
-        window.location.href = cleanUrl.toString();
-    });
+    nameInput.placeholder = "Enter quiz ID";
+    nameInput.value = "";
+    searchBtn.innerText = "Search";
+    
+    searchBtn.style.display = "inline";
+    quizBtn.style.display = "none";
 } else {
     fetchData().then(data => {
         options = data.options;
         questions = data.questions;
         solutions = data.solutions;
         
-        console.log(data,data.title,data.desc);
+        console.log(data, data.title, data.desc);
 
         document.getElementById("info").innerText = data.title || "Quiz";
         document.getElementById("blurb").innerText = data.desc || "Test your knowledge";
         
         hide(true);
-        document.getElementById("submit").innerText = "Start";
+        
+        searchBtn.style.display = "none";
+        quizBtn.style.display = "inline";
+        quizBtn.innerText = "Start";
     }).catch(error => {
         console.error("Error loading quiz data:", error);
         document.getElementById("info").innerText = "Error Loading Quiz";
         errorMessage();
     });
 
-    fetchLeadeboard().then(data => {
-            leaderboard=data;
-        }).catch(error => {
-            console.error("Error loading leaderboard data:", error);
-            document.getElementById("info").innerText = "Error Loading Leaderboard";
-            errorMessage();
-        });
+    fetchLeaderboard().then(data => {
+        leaderboard = data;
+    }).catch(error => {
+        console.error("Error loading leaderboard data:", error);
+        document.getElementById("info").innerText = "Error Loading Leaderboard";
+        errorMessage();
+    });
 }
 
-for (let i = 1; i<5; i++) {
-    document.getElementById("opt"+i).addEventListener("click", ()=>{if(!selected) {selection(i)}})
-}
-document.getElementById("submit").addEventListener("click", ()=>advance());
+setupEventListeners();

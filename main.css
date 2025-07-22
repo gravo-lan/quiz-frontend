@@ -57,7 +57,7 @@ p {
     font-size: 19px;
 }
 
-.submit {
+#quiz-btn, #search-btn {
     border-radius: 12px;
     border: none;
     padding: 15px 32px;
@@ -74,7 +74,7 @@ p {
     left:45%
 }
 
-.submit:hover {
+#quiz-btn:hover, #search-btn:hover {
     border-radius: 12px;
     border: solid;
     padding: 15px 32px;
@@ -196,4 +196,8 @@ th, td {
     left:50%;
     transform: translateX(-50%);
     bottom:35%
+}
+
+.hidden {
+    display: none !important;
 }
