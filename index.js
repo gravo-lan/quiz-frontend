@@ -225,9 +225,27 @@ if (!id) {
     document.getElementById("loading").style.display = "none";
     document.getElementById("info").innerText = "Quiz Site";
     document.getElementById("blurb").innerText = "A quiz website that can host custom modular quizzes.";
-    document.getElementById("name").placeholder = "Enter a quiz ID";
+    document.getElementById("name").placeholder = "Enter quiz ID";
+    document.getElementById("name").value = "";
     document.getElementById("submit").innerText = "Search";
-    document.getElementById("submit").addEventListener("click", ()=>{window.location.href=HOME_URL + "?id=" + document.getElementById("name").value})
+
+    document.getElementById("search-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const button = document.getElementById("submit");
+        const quizId = document.getElementById("name").value.trim();
+        
+        if (!quizId) {
+            alert("Please enter a quiz ID");
+            return;
+        }
+
+        button.disabled = true;
+        button.innerText = "Loading...";
+        
+        const cleanUrl = new URL(window.location.origin + window.location.pathname);
+        cleanUrl.searchParams.set("id", quizId);
+        window.location.href = cleanUrl.toString();
+    });
 } else {
     fetchData().then(data => {
         options = data.options;
