@@ -7,6 +7,7 @@ let timeLeft;
 let totalTime = 0;
 let userAnswers = [];
 
+const HOME_URL = document.URL;
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 
@@ -101,9 +102,9 @@ function update() {
 
 function start() {
     const name = document.getElementById("name");
-    if (name.value == "Input your name...") {
+    if (name.value == "") {
         alert("Please input a name.");
-        return false;
+        return;
     }
     hide(false);
     started=true;
@@ -226,7 +227,7 @@ if (!id) {
     document.getElementById("blurb").innerText = "A quiz website that can host custom modular quizzes.";
     document.getElementById("name").placeholder = "Enter a quiz ID";
     document.getElementById("submit").innerText = "Search";
-    document.getElementById("submit").addEventListener("click", ()=>{window.location.href=document.URL + "?id=" + document.getElementById("name").value})
+    document.getElementById("submit").addEventListener("click", ()=>{window.location.href=HOME_URL + "?id=" + document.getElementById("name").value})
 } else {
     fetchData().then(data => {
         options = data.options;
