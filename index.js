@@ -7,7 +7,8 @@ let timeLeft;
 let totalTime = 0;
 let userAnswers = [];
 
-const id = 0;
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
 
 const API_URL = "https://quiz-backend-junk.onrender.com";
 
@@ -48,32 +49,6 @@ const fetchLeadeboard = async () => {
         errorMessage();
     }
 }
-
-fetchData().then(data => {
-    options = data.options;
-    questions = data.questions;
-    solutions = data.solutions;
-    
-    console.log(data,data.title,data.desc);
-
-    document.getElementById("info").innerText = data.title || "Quiz";
-    document.getElementById("blurb").innerText = data.desc || "Test your knowledge";
-    
-    hide(true);
-    document.getElementById("submit").innerText = "Start";
-}).catch(error => {
-    console.error("Error loading quiz data:", error);
-    document.getElementById("info").innerText = "Error Loading Quiz";
-    errorMessage();
-});
-
-fetchLeadeboard().then(data => {
-        leaderboard=data;
-    }).catch(error => {
-        console.error("Error loading leaderboard data:", error);
-        document.getElementById("info").innerText = "Error Loading Leaderboard";
-        errorMessage();
-    });
 
 const hidden = [document.getElementById("timer"),document.getElementById("options"),document.getElementById("progbar"),document.getElementById("score"),document.getElementById("progress")]
 
@@ -244,6 +219,41 @@ async function submitResults(score, timeTaken, answers, id, username) {
 }
 
 hide(true);
+
+if (!id) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("info").innerText = "Quiz Site";
+    document.getElementById("blurb").innerText = "A quiz website that can host custom modular quizzes.";
+    document.getElementById("name").value = "Enter a quiz ID";
+    document.getElementById("submit").innerText = "Search";
+    document.getElementById("submit").addEventListener("click", ()=>{window.location.href=document.URL + "?id=" + document.getElementById("name").value})
+} else {
+    fetchData().then(data => {
+        options = data.options;
+        questions = data.questions;
+        solutions = data.solutions;
+        
+        console.log(data,data.title,data.desc);
+
+        document.getElementById("info").innerText = data.title || "Quiz";
+        document.getElementById("blurb").innerText = data.desc || "Test your knowledge";
+        
+        hide(true);
+        document.getElementById("submit").innerText = "Start";
+    }).catch(error => {
+        console.error("Error loading quiz data:", error);
+        document.getElementById("info").innerText = "Error Loading Quiz";
+        errorMessage();
+    });
+
+    fetchLeadeboard().then(data => {
+            leaderboard=data;
+        }).catch(error => {
+            console.error("Error loading leaderboard data:", error);
+            document.getElementById("info").innerText = "Error Loading Leaderboard";
+            errorMessage();
+        });
+}
 
 for (let i = 1; i<5; i++) {
     document.getElementById("opt"+i).addEventListener("click", ()=>{if(!selected) {selection(i)}})
