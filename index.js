@@ -224,7 +224,7 @@ if (!id) {
     document.getElementById("loading").style.display = "none";
     document.getElementById("info").innerText = "Quiz Site";
     document.getElementById("blurb").innerText = "A quiz website that can host custom modular quizzes.";
-    document.getElementById("name").value = "Enter a quiz ID";
+    document.getElementById("name").placeholder = "Enter a quiz ID";
     document.getElementById("submit").innerText = "Search";
     document.getElementById("submit").addEventListener("click", ()=>{window.location.href=document.URL + "?id=" + document.getElementById("name").value})
 } else {
