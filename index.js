@@ -55,7 +55,7 @@ const fetchLeaderboard = async () => {
     }
 }
 
-const hidden = [document.getElementById("timer"),document.getElementById("options"),document.getElementById("progbar"),document.getElementById("score"),document.getElementById("progress")]
+const hidden = [document.getElementById("timer"),document.getElementById("options"),document.getElementById("progbar"),document.getElementById("score"),document.getElementById("progress"),document.getElementById("help")]
 
 function errorMessage() {
     document.getElementById("blurb").innerText = "Please try again later";
@@ -221,7 +221,6 @@ async function submitResults(score, timeTaken, answers, id, username) {
         console.log("Submission successful:", result);
     } catch (error) {
         console.error("Error submitting results:", error);
-        // Optional: Show error message to user
         document.getElementById("blurb").innerText += "\n\nFailed to save results. Please try again later.";
     }
 }
@@ -256,7 +255,6 @@ function setupEventListeners() {
         searchQuiz();
     });
 
-    // Quiz button handler
     quizBtn.addEventListener("click", function() {
         if (started) {
             advance();
@@ -265,13 +263,86 @@ function setupEventListeners() {
         }
     });
 
-    // Handle Enter key in name field
     document.getElementById("name").addEventListener("keypress", function(e) {
         if (e.key === "Enter") {
             e.preventDefault();
             if (id && !started) {
                 start();
             }
+        }
+    });
+
+    document.getElementById("hint").addEventListener("click", async ()=>{
+        document.getElementById("loading").style.display="block";
+        clearInterval(timerId);
+        const questionText = document.getElementById("question").innerText || "";
+        try {
+            console.log("Sending to hint webhook:", questionText);
+            
+            const response = await fetch(`https://gravolan.app.n8n.cloud/webhook/d481ef09-28ac-49b7-9ead-e791a2ead99b`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    message: questionText
+                }.message)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error! status: ${response.status}`)
+            }
+
+            const result = await response.json();
+            document.getElementById("loading").style.display="none";
+            const parsedReply = JSON.parse(result[0].reply);
+            console.log(parsedReply.content.hint);
+            alert("Hint: " + parsedReply.content.hint);
+        } catch (error) {
+            alert("Couldn't fetch an AI hint! Try again later...");
+            console.error("Error fetching AI hint:",error);
+        } finally {
+            if (!selected) timerId = setInterval(countdown, 1000);
+        }
+    });
+
+    document.getElementById("solution").addEventListener("click", async ()=>{
+        document.getElementById("loading").style.display="block";
+        clearInterval(timerId);
+        const questionText = document.getElementById("question").innerText || "";
+        const solutionText = options[progress-1][solutions[progress-1]] || "";
+        try {
+            console.log("Sending to solution webhook:", questionText);
+            
+            const response = await fetch(`https://gravolan.app.n8n.cloud/webhook/3733e655-1f7a-447f-becc-2eb06f0ab6b4`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    solution: solutionText,
+                    question: questionText
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP Error! status: ${response.status}`)
+            }
+            
+            const result = await response.json();
+            timeLeft = 0;
+            clearTimeout(timerId);
+            selected=true;
+            document.getElementById("opt"+solutions[progress-1]).style.backgroundColor = "green";
+            document.getElementById("loading").style.display="none";
+            const parsedReply = JSON.parse(result[0].reply);
+            console.log(parsedReply);
+            alert("Correct Answer: " + parsedReply.content.correct_answer + "\nExplanation: " + parsedReply.content.explanation);
+        } catch (error) {
+            alert("Couldn't fetch an AI  solution! Try again later...");
+            console.error("Error fetching AI solution:",error);
+        } finally {
+            if (!selected) timerId = setInterval(countdown, 1000);
         }
     });
 }

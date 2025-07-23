@@ -158,6 +158,9 @@ p {
 }
 
 .loader {
+  position: absolute;
+  left:50%;
+  transform: translateX(-50%);
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -200,4 +203,24 @@ th, td {
 
 .hidden {
     display: none !important;
+}
+
+#hint { 
+    position:absolute;
+    bottom: 5%;
+    left: 5%;
+    background-color: gray;
+    color: white;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+#solution {
+    position:absolute;
+    bottom: 5%;
+    right: 5%;
+    background-color: gray;
+    color: white;
+    border-radius: 50%;
+    font-size: 20px;
 }
