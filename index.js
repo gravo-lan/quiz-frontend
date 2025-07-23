@@ -106,7 +106,10 @@ function update() {
 }
 
 function start() {
-    if (nameInput.value.trim() === "") {
+    const nameInput = document.getElementById("name");
+    const name = nameInput.value.trim();
+    
+    if (!name) {
         alert("Please input a name.");
         return;
     }
@@ -114,7 +117,7 @@ function start() {
     hide(false);
     started = true;
     quizBtn.innerText = "Next";
-    username = nameInput.value.trim();
+    username = name;
     nameInput.style.display = "none";
     advance();
 }
@@ -125,11 +128,9 @@ function finish() {
     quizBtn.style.display="none";
     document.getElementById("info").innerText = "You did it!";
     
-    // Calculate total time taken
     const totalTimeTaken = (solutions.length * 10) - totalTime;
     document.getElementById("blurb").innerText = "You got: " + score + "/" + solutions.length + "!\nTime taken: " + totalTimeTaken + " seconds";
 
-    // Submit results to server
     submitResults(score, totalTimeTaken, userAnswers, id, username);
     showLeaderboard();
 }
@@ -226,7 +227,7 @@ async function submitResults(score, timeTaken, answers, id, username) {
 }
 
 function searchQuiz() {
-    const quizId = nameInput.value.trim();
+    const quizId = document.getElementById("search-input").value.trim();
     
     if (!quizId) {
         alert("Please enter a quiz ID");
@@ -250,16 +251,27 @@ function setupEventListeners() {
         });
     }
 
-    document.getElementById("search-form").addEventListener("submit", (e) => {
+    document.getElementById("search-form").addEventListener("submit", function(e) {
         e.preventDefault();
         searchQuiz();
     });
 
-    quizBtn.addEventListener("click", () => {
-        if (id && !started) {
-            start();
-        } else {
+    // Quiz button handler
+    quizBtn.addEventListener("click", function() {
+        if (started) {
             advance();
+        } else {
+            start();
+        }
+    });
+
+    // Handle Enter key in name field
+    document.getElementById("name").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (id && !started) {
+                start();
+            }
         }
     });
 }
@@ -270,10 +282,8 @@ if (!id) {
     document.getElementById("loading").style.display = "none";
     document.getElementById("info").innerText = "Quiz Site";
     document.getElementById("blurb").innerText = "A quiz website that can host custom modular quizzes.";
-    nameInput.placeholder = "Enter quiz ID";
-    nameInput.value = "";
-    searchBtn.innerText = "Search";
-    
+    document.getElementById("search-input").placeholder = "Enter quiz ID";
+    document.getElementById("name-container").style.display = "none"; // Hide name field
     searchBtn.style.display = "inline";
     quizBtn.style.display = "none";
 } else {
@@ -289,6 +299,10 @@ if (!id) {
         
         hide(true);
         
+        document.getElementById("search-input").style.display = "none";
+        document.getElementById("name-container").style.display = "block";
+        document.getElementById("name").value = "";
+        document.getElementById("name").placeholder = "Enter your name";
         searchBtn.style.display = "none";
         quizBtn.style.display = "inline";
         quizBtn.innerText = "Start";

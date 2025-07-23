@@ -186,7 +186,7 @@ th, td {
     border: 2px solid white;
 }
 
-#name {
+#name, #search-input {
     position: absolute;
     transition: width 0.4s ease-in-out;
     opacity: 50%;
